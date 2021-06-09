@@ -1,4 +1,4 @@
-# JavaScript Advanced Functions: Debug-Along: The Lost Context Bug
+# The Lost Context Bug Code-Along
 
 ## Learning Goals
 

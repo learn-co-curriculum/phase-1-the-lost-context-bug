@@ -35,7 +35,7 @@ card.
 The `Object` looks like this:
 
 ```js
-let configuration = {
+const configuration = {
     frontContent: "Happy Birthday, Odin One-Eye!",
     insideContent: "From Asgard to Nifelheim, you're the best all-father ever.\n\nLove,",
     closing: {
@@ -52,12 +52,12 @@ let configuration = {
 To display this, they wrote the following function:
 
 ```js
-let printCard = function() {
+const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
 
     this.signatories.forEach(function(signatory){
-        let message = `${this.closing[signatory]}, ${signatory}`
+        const message = `${this.closing[signatory]}, ${signatory}`
         console.log(message)
     })
 }
@@ -101,14 +101,14 @@ calls so we can see what `this` is. Let's update our `printCard` function as
 follows:
 
 ```js
-let printCard = function() {
+const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
 
     console.log("Debug Before forEach: " + this)
     this.signatories.forEach(function(signatory){
         console.log("Debug Inside: " + this)
-        // let message = `${this.closing[signatory]}, ${signatory}`
+        // const message = `${this.closing[signatory]}, ${signatory}`
         // console.log(message)
     })
 }
@@ -156,12 +156,12 @@ fixes our bug.
 > see where a `thisArg` is expected.
 
 ```js
-let printCard = function() {
+const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
 
     this.signatories.forEach(function(signatory){
-        let message = `${this.closing[signatory]}, ${signatory}`
+        const message = `${this.closing[signatory]}, ${signatory}`
         console.log(message)
     }, this)
 }
@@ -185,11 +185,11 @@ A slight variation on this idea would be to invoke `bind` on the function
 expression in the `forEach`:
 
 ```js
-let printCard = function() {
+const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
-    let contextBoundForEachExpr = function(signatory){
-        let message = `${this.closing[signatory]}, ${signatory}`
+    const contextBoundForEachExpr = function(signatory){
+        const message = `${this.closing[signatory]}, ${signatory}`
         console.log(message)
     }.bind(this)
 
@@ -221,14 +221,14 @@ to" that context, we could assign that value to a variable and leverage
 function-level scope and _closures_ to regain access to the outer context.
 
 ```js
-let printCard = function() {
+const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
 
-    let outerContext = this
+    const outerContext = this
 
     this.signatories.forEach(function(signatory){
-        let message = `${outerContext.closing[signatory]}, ${signatory}`
+        const message = `${outerContext.closing[signatory]}, ${signatory}`
         console.log(message)
     })
 }
@@ -282,24 +282,24 @@ below. It's typical.
 An arrow function looks like this:
 
 ```js
-// The let greeter is merely the assignment, the expression begins at `(`
-let greeter = (nameToGreet) => {
-    let message = `Good morning ${nameToGreet}`
+// The const greeter is merely the assignment, the expression begins at `(`
+const greeter = (nameToGreet) => {
+    const message = `Good morning ${nameToGreet}`
     console.log(message)
     return "Greeted: " + nameToGreet
 }
-let result = greeter("Max") //=> "Greeted: Max"
+const result = greeter("Max") //=> "Greeted: Max"
 ```
 
 Which, excluding context-switching differences, is the exact same as:
 
 ```js
-let greeter = function(nameToGreet) {
-    let message = `Good morning ${nameToGreet}`
+const greeter = function(nameToGreet) {
+    const message = `Good morning ${nameToGreet}`
     console.log(message)
     return "Greeted: " + nameToGreet
 }.bind(this)
-let result = greeter("Max Again") //=> "Greeted: Max Again"
+const result = greeter("Max Again") //=> "Greeted: Max Again"
 ```
 
 Because arrow functions are _so often used_ to take a value, do a single
@@ -313,7 +313,7 @@ Thus Thor and Loki can fix their problem and wish their father a happy birthday
 most elegantly with the following code:
 
 ```js
-let printCard = function() {
+const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
     // Wow! Elegant! And notice the arrow function's `this` is the same

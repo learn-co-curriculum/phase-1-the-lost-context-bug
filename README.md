@@ -28,9 +28,9 @@ console. You will add your code in `index.js`.
 
 It's the All-Father Odin's birthday. His sons, Thor and Loki, would like to
 print him a birthday greeting using JavaScript. They know how to define
-`Object`s and `function`s, so they've written a simple function that takes an
-configuration `Object` as the _execution context_ and prints a JavaScript
-greeting card.
+`Object`s and `function`s, so they've written a simple function that takes a
+configuration `Object` as the context object and prints a JavaScript greeting
+card.
 
 The `Object` looks like this:
 
@@ -305,9 +305,9 @@ let result = greeter("Max Again") //=> "Greeted: Max Again"
 Because arrow functions are _so often used_ to take a value, do a single
 operation with it, and return the result, they have two shortcuts:
 
-* If you pass only one argument, you don't have to wrap the single parameter in `()`
-* If there is only one expression, you don't need to wrap it in `{}` and the result of that expression is automatically returned.
-* Anti-Shortcut: If you *DO* use `{}`, you must explicitly `return` the return value
+- If you pass only one argument, you don't have to wrap the single parameter in `()`
+- If there is only one expression, you don't need to wrap it in `{}` and the result of that expression is automatically returned.
+- Anti-Shortcut: If you *DO* use `{}`, you must explicitly `return` the return value
 
 Thus Thor and Loki can fix their problem and wish their father a happy birthday
 most elegantly with the following code:
@@ -350,8 +350,8 @@ need in order to build your own JavaScript library. Enjoy the challenge!
 
 ## Resources
 
-* [foreach][fed]
-* [Arrow Function][arrow]
+- [foreach][fed]
+- [Arrow Function][arrow]
 - [MDN On Why Arrow Functions Help Us leverage `this`][septhis]
 
 [fed]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach

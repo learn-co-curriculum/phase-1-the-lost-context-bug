@@ -31,7 +31,7 @@ print him a birthday greeting using JavaScript. They know how to define
 `Object`s and `function`s, so they've written a simple function that takes an
 `Object` (`messageConfig`) as context and prints a JavaScript greeting card.
 
-The `Object` (which is already defined in `index.js`) looks like this:
+The `Object` looks like this:
 
 ```js
 const messageConfig = {

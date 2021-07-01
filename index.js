@@ -1,4 +1,4 @@
-const configuration = {
+const messageConfig = {
   frontContent: "Happy Birthday, Odin One-Eye!",
   insideContent: "From Asgard to Nifelheim, you're the best all-father ever.\n\nLove,",
   closing: {

@@ -28,14 +28,13 @@ console. You will add your code in `index.js`.
 
 It's the All-Father Odin's birthday. His sons, Thor and Loki, would like to
 print him a birthday greeting using JavaScript. They know how to define
-`Object`s and `function`s, so they've written a simple function that takes a
-configuration `Object` as the context object and prints a JavaScript greeting
-card.
+`Object`s and `function`s, so they've written a simple function that takes an
+`Object` (`messageConfig`) as context and prints a JavaScript greeting card.
 
-The `Object` looks like this:
+The `Object` (which is already defined in `index.js`) looks like this:
 
 ```js
-const configuration = {
+const messageConfig = {
     frontContent: "Happy Birthday, Odin One-Eye!",
     insideContent: "From Asgard to Nifelheim, you're the best all-father ever.\n\nLove,",
     closing: {
@@ -62,7 +61,7 @@ const printCard = function() {
     })
 }
 
-printCard.call(configuration)
+printCard.call(messageConfig)
 ```
 
 This doesn't work as planned. They get an error like the following:
@@ -81,11 +80,11 @@ Uncaught TypeError: Cannot read property 'Thor' of undefined
     at index.js:25
 ```
 
-What is going on here?" A quick debug shows that there **very much** is a
-property called `"Thor"` in `configuration.closing`:
+What is going on here? A quick debug in the console shows that there **very
+much** is a property called `"Thor"` in `messageConfig.closing`:
 
 ```js
-console.log(configuration.closing.Thor) //=> "Admiration, respect, and love"
+console.log(messageConfig.closing.Thor) //=> "Admiration, respect, and love"
 ```
 
 Here is one of the most mind-boggling problems in JavaScript: a bug created in
@@ -113,10 +112,10 @@ const printCard = function() {
     })
 }
 
-printCard.call(configuration)
+printCard.call(messageConfig)
 ```
 
-This produces:
+When we refresh the browser, this produces:
 
 ```text
 Happy Birthday, Odin One-Eye!
@@ -129,20 +128,19 @@ Debug Inside: [object Window]
 ```
 
 The `console.log()` statements reveal the bug. _Inside_ the `forEach`, the
-execution context **is not** the `configuration` `Object` we used as a `this`
-argument when calling the function `printCard`. Instead, the `this` _inside_
-the function expression passed to `forEach` is the global object (`window` or
+execution context **is not** the `messageConfig` `Object` we used as a `thisArg`
+argument when calling the function `printCard`. Instead, the `this` _inside_ the
+function expression passed to `forEach` is the global object (`window` or
 `global`).
 
-Remember the rules of function invocation. A function defaults to getting the
-global scope as _execution context_ when it is called without "anything to the
-left of a dot". It **does not** get its parent function's _execution context_
-automatically. There are many ways for programmers to solve this problem. The
-three most common are:
+Remember the rules of function invocation. A function defaults to the _global
+execution context_ when it is called without "anything to the left of the dot".
+It **does not** get its parent function's context automatically. There are many
+ways for programmers to solve this problem. The three most common are:
 
-1. Pass a `thisArg`
+1. Explicitly specify the context by either passing a `thisArg` or using `bind`
 2. Use a closure
-3. Use (something new) the arrow function expression
+3. Use an arrow function expression
 
 ## Solution 1:  Use a `thisArg` to avoid the lost context bug
 
@@ -166,7 +164,7 @@ const printCard = function() {
     }, this)
 }
 
-printCard.call(configuration)
+printCard.call(messageConfig)
 
 /*
 Happy Birthday, Odin One-Eye!
@@ -178,7 +176,7 @@ Your son, Loki
 */
 ```
 
-In the call to `forEach`, we tell it to use (for its own context) the context
+In the call to `forEach`, we tell it to use (as its own context) the context
 that `printCard` has as `printCard`'s `this`.
 
 A slight variation on this idea would be to invoke `bind` on the function
@@ -196,7 +194,7 @@ const printCard = function() {
     this.signatories.forEach(contextBoundForEachExpr)
 }
 
-printCard.call(configuration)
+printCard.call(messageConfig)
 /*
 Happy Birthday, Odin One-Eye!
 From Asgard to Nifelheim, you're the best all-father ever.
@@ -214,11 +212,11 @@ powerful `reduce` method.
 
 ## Solution 2: Use a Closure to Regain Access to the Lost Context
 
-In the previous section, we noted that we were going to take the `this` that
-`printCard` has access to and re-pass it either as a `thisArg` to `forEach`
-**or** provide it as the context for `bind`. Since we have an ability to "point
-to" that context, we could assign that value to a variable and leverage
-function-level scope and _closures_ to regain access to the outer context.
+In the previous section, we fixed the bug by taking the `this` that `printCard`
+has access to and either re-passing it as a `thisArg` to `forEach` **or**
+providing it as the context for `bind`. Alternatively, we could assign that
+value to a variable and leverage function-level scope and _closures_ to regain
+access to the outer context.
 
 ```js
 const printCard = function() {
@@ -233,7 +231,7 @@ const printCard = function() {
     })
 }
 
-printCard.call(configuration)
+printCard.call(messageConfig)
 /*
 Happy Birthday, Odin One-Eye!
 From Asgard to Nifelheim, you're the best all-father ever.
@@ -245,17 +243,16 @@ Your son, Loki
 ```
 
 Many JavaScript developers define the variable we called `outerContext` by the
-name `self` which sure is confusing for Ruby programmers!  In any case, by
-using an assignment with `let`, `var` or `const`, we put the original context
-within the function-level scope that the inner function encloses as a closure.
-This means inside the inner function, we can get "back" to the outer function's
-context. That's solution number two.
+name `self`. In any case, by assigning it to a variable, we put the original
+context within the function-level scope that the inner function encloses as a
+closure. This means inside the inner function, we can get "back" to the outer
+function's context. That's solution number two.
 
 What we would _really_ like is for there to be a way to tell the `function`
 inside of `forEach` to
 
 1. _Not_ declare its own context **but also**
-2. _Not_ require us to do some extra work with using `bind` or a `thisArg`.
+2. _Not_ require us to do the extra work of using `bind` or a `thisArg`.
 
 In ES6, JavaScript gave us an answer: the "arrow function expression." This is
 our third and most-preferred option. Nevertheless, you will see all the other
@@ -263,26 +260,26 @@ approaches used in framework code (e.g. React) and in other codebases.
 
 ## Solution 3: Use an Arrow Function Expression to Create a Function Without Its Own Context
 
-The arrow function expression (often simply called an "arrow function") is yet
-another way of writing a function expression. They look different from "old
-style" function expressions, but the ***most important difference*** is that
-the arrow function is ***automatically bound*** to its parent's context and
-does not create a context of its own.
+As we learned earlier in this Phase, the arrow function expression (often simply
+called an "arrow function") is yet another way of writing a function expression.
+They look different from "old style" function expressions, but the ***most
+important difference*** is that the arrow function is ***automatically bound***
+to its parent's context and does not create a context of its own.
 
-Many programmers think arrow functions are much more predictable since they
-do not create their own `this` during execution and instead "absorb" the
-context of their enclosing environment.
+Many programmers think arrow functions are much more predictable since they do
+not create their own `this` during execution and instead "absorb" the context of
+their enclosing environment.
 
-Since _the whole point_ of an arrow function is to ***not have its own
-execution context***, we should not use `call`, `bind`, or `apply` when
-executing them. Most of the time, you'll see them used like anonymous functions
-passed as first-class data into another function See the `reduce` example
-below. It's typical.
+Since _the whole point_ of an arrow function is to ***not have its own execution
+context***, we should not use `call`, `bind`, or `apply` when executing them.
+Most of the time, you'll see them used like anonymous functions passed as
+first-class data into another function. See the `reduce` example below. It's
+typical.
 
-An arrow function looks like this:
+You will recall that an arrow function looks like this:
 
 ```js
-// The const greeter is merely the assignment, the expression begins at `(`
+// The `const greeter` is merely the assignment, the expression begins after the `=`
 const greeter = (nameToGreet) => {
     const message = `Good morning ${nameToGreet}`
     console.log(message)
@@ -291,7 +288,7 @@ const greeter = (nameToGreet) => {
 const result = greeter("Max") //=> "Greeted: Max"
 ```
 
-Which, excluding context-switching differences, is the exact same as:
+Which gives the exact same result as:
 
 ```js
 const greeter = function(nameToGreet) {
@@ -306,7 +303,8 @@ Because arrow functions are _so often used_ to take a value, do a single
 operation with it, and return the result, they have two shortcuts:
 
 - If you pass only one argument, you don't have to wrap the single parameter in `()`
-- If there is only one expression, you don't need to wrap it in `{}` and the result of that expression is automatically returned.
+- If there is only one expression, you don't need to wrap it in `{}` and the
+  result of that expression is automatically returned.
 - Anti-Shortcut: If you *DO* use `{}`, you must explicitly `return` the return value
 
 Thus Thor and Loki can fix their problem and wish their father a happy birthday
@@ -316,14 +314,13 @@ most elegantly with the following code:
 const printCard = function() {
     console.log(this.frontContent)
     console.log(this.insideContent)
-    // Wow! Elegant! And notice the arrow function's `this` is the same
-    // this that printCard has by virtue of configuration being passed
-    // in as a thisArg
+    // Wow! Elegant! And notice the arrow function's `this` is the same `this`
+    // that printCard has; specifically, the `thisArg` that was passed to it 
     this.signatories.forEach(s => console.log(`${this.closing[s]}, ${s}`)
     )
 }
 
-printCard.call(configuration)
+printCard.call(messageConfig)
 /* OUTPUT:
 Happy Birthday, Odin One-Eye!
 From Asgard to Nifelheim, you're the best all-father ever.
@@ -336,14 +333,13 @@ Your son, Loki
 
 ## Conclusion
 
-You've now learned how to both spot and how to counteract the lost context bug
+You've now learned how to both spot and counteract the lost context bug
 using some very interesting tools. We think of this as a way to help protect
 you as you start to build your own applications.
 
-The arrow function expression that we introduced here is a very important piece
-of syntax. While it lets us type less, and _yes_ that is a very good thing, its
-most important feature is that ***it carries its parent's context as its
-own***.
+The arrow function expression that we used here is a very important piece of
+syntax. While it lets us type less, and _yes_ that is a very good thing, its
+most important feature is that ***it carries its parent's context as its own***.
 
 With this knowledge, we think you've learned all the skills you're going to
 need in order to build your own JavaScript library. Enjoy the challenge!
